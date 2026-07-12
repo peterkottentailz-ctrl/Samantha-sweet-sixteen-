@@ -30,6 +30,11 @@ button:hover {
   margin-top: 20px;
   max-width: 90%;
 }
+#status {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #333;
+}
 </style>
 </head>
 
@@ -42,9 +47,10 @@ button:hover {
 <button onclick="document.getElementById('cameraInput').click();">Take Photo</button>
 
 <img id="preview" />
+<div id="status"></div>
 
 <script>
-document.getElementById('cameraInput').addEventListener('change', function(event) {
+document.getElementById('cameraInput').addEventListener('change', async function(event) {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -52,14 +58,28 @@ document.getElementById('cameraInput').addEventListener('change', function(event
     const img = document.getElementById('preview');
     img.src = URL.createObjectURL(file);
 
-    // Upload to Google Drive via your folder link
-    const uploadUrl = "https://drive.google.com/drive/folders/1nRP71lmTxZrcirU9oQSS_6q_O7lcM7Ad?usp=sharing";
+    document.getElementById('status').innerText = "Uploading photo...";
 
-    alert("Your photo is being uploaded!");
+    // Convert file to form data
+    const formData = new FormData();
+    formData.append("file", file);
 
-    // Google Drive does not allow direct uploads via link,
-    // so we redirect users to the upload page with the file selected.
-    window.location.href = uploadUrl;
+    try {
+        const uploadUrl = "https://script.google.com/macros/s/AKfycbwpW5BbEYYpxLjqpZ23PqGlFV9JrlOk4MXUsbzx7fvzNvrxWUVPKfLlmtT5skO1ZBnSSA/exec";
+
+        const response = await fetch(uploadUrl, {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            document.getElementById('status').innerText = "Photo uploaded successfully!";
+        } else {
+            document.getElementById('status').innerText = "Upload failed. Try again.";
+        }
+    } catch (error) {
+        document.getElementById('status').innerText = "Error uploading photo.";
+    }
 });
 </script>
 
