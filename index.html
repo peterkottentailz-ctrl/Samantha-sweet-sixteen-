@@ -48,13 +48,10 @@
     <script>
         async function uploadPhoto(file) {
             try {
-                const uploadUrl = "https://script.google.com/macros/s/AKfycbwAaQ3pIglcOE5bsaI6f8J4fHKazj-WXwFw5nJd5vAzEXs4mK_URqBW5CB06m0IWUQT/exec";
+                const uploadUrl = "https://script.google.com/macros/s/AKfycbwAaQ3pIglcOE5bsal6f8J4fHKazj-WXwFw5nJd5vAzEXs4mK_URqBW5CB06m0IWUQT/exec";
 
                 const response = await fetch(uploadUrl, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/octet-stream"
-                    },
                     body: file
                 });
 
