@@ -17,19 +17,19 @@
             background: white;
             padding: 25px;
             border-radius: 12px;
-            max-width: 400px;
+            max-width: 450px;
             margin: auto;
             box-shadow: 0px 0px 10px rgba(0,0,0,0.15);
-        }
-
-        #fileInput {
-            margin-top: 20px;
         }
 
         #status {
             margin-top: 20px;
             font-size: 18px;
             font-weight: bold;
+        }
+
+        input {
+            margin-top: 15px;
         }
     </style>
 </head>
@@ -38,9 +38,13 @@
 
     <div id="container">
         <h2>Samantha's Sweet Sixteen</h2>
-        <p>Upload your photo below:</p>
+        <p>Upload a photo using your camera:</p>
 
-        <input type="file" id="fileInput" accept="image/*" capture="environment">
+        <input type="file" id="cameraInput" accept="image/*" capture="environment">
+
+        <p style="margin-top:25px;">Or upload multiple photos from your gallery:</p>
+
+        <input type="file" id="galleryInput" accept="image/*" multiple>
 
         <div id="status"></div>
     </div>
@@ -48,8 +52,8 @@
     <script>
         const uploadUrl = "https://script.google.com/macros/s/AKfycbzjLkwPl7QZMEwJx0VK4k8H4jSIJ5Kopo9boIUWtFoUmDkhVHw3nkS-u4LB4Q7oNiHJ4A/exec";
 
-        async function uploadPhoto(file) {
-            try {
+        async function uploadSinglePhoto(file) {
+            return new Promise((resolve) => {
                 const reader = new FileReader();
 
                 reader.onload = async function() {
@@ -63,24 +67,33 @@
                         body: formData
                     });
 
-                    if (response.ok) {
-                        document.getElementById('status').innerText = "Photo uploaded successfully!";
-                    } else {
-                        document.getElementById('status').innerText = "Upload failed.";
-                    }
+                    resolve(response.ok);
                 };
 
                 reader.readAsDataURL(file);
-
-            } catch (error) {
-                document.getElementById('status').innerText = "Error uploading photo.";
-            }
+            });
         }
 
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', () => {
-            const file = fileInput.files[0];
-            uploadPhoto(file);
+        document.getElementById('cameraInput').addEventListener('change', async () => {
+            const file = cameraInput.files[0];
+            document.getElementById('status').innerText = "Uploading...";
+            const success = await uploadSinglePhoto(file);
+            document.getElementById('status').innerText = success ? "Photo uploaded successfully!" : "Upload failed.";
+        });
+
+        document.getElementById('galleryInput').addEventListener('change', async () => {
+            const files = galleryInput.files;
+            document.getElementById('status').innerText = "Uploading multiple photos...";
+
+            let uploaded = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const success = await uploadSinglePhoto(files[i]);
+                if (success) uploaded++;
+            }
+
+            document.getElementById('status').innerText =
+                `Uploaded ${uploaded} of ${files.length} photos successfully!`;
         });
     </script>
 
