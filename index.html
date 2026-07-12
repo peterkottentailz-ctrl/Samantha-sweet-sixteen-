@@ -62,15 +62,15 @@ document.getElementById('cameraInput').addEventListener('change', async function
 
     // Convert file to form data
     const formData = new FormData();
-    formData.append("file", file);
+formData.append("uploadedFile", file, "photo.jpg");
 
-    try {
-        const uploadUrl = "https://script.google.com/macros/s/AKfycbwpW5BbEYYpxLjqpZ23PqGlFV9JrlOk4MXUsbzx7fvzNvrxWUVPKfLlmtT5skO1ZBnSSA/exec";
+try {
+    const uploadUrl = "https://script.google.com/macros/s/AKfycbwpW5BbEYYpxLjqpZ23PqGlFV9JrlOk4MXUsbzx7fvzNvrxWUVPKfLlmtT5skO1ZBnSSA/exec";
 
-        const response = await fetch(uploadUrl, {
-            method: "POST",
-            body: formData
-        });
+    const response = await fetch(uploadUrl, {
+        method: "POST",
+        body: formData
+    });
 
         if (response.ok) {
             document.getElementById('status').innerText = "Photo uploaded successfully!";
