@@ -54,12 +54,48 @@
             100% { transform: translateY(-40px) scale(0.2); opacity: 0; }
         }
 
+        /* Gold glitter overlay */
+        #glitterOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: url('https://i.imgur.com/7yZ8FvP.png');
+            background-size: cover;
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Curtain animation */
+        #curtainLeft, #curtainRight {
+            position: fixed;
+            top: 0;
+            width: 50vw;
+            height: 100vh;
+            background: url('https://i.imgur.com/2u7qf2F.jpeg');
+            background-size: cover;
+            animation: curtainOpen 3s forwards ease-in-out;
+            z-index: 3;
+        }
+
+        #curtainLeft { left: 0; }
+        #curtainRight { right: 0; }
+
+        @keyframes curtainOpen {
+            0% { width: 50vw; }
+            100% { width: 0; }
+        }
+
         /* Filmstrip border */
         #filmstrip {
             border: 12px solid gold;
             border-image: url('https://i.imgur.com/8fKQZQx.png') 30 round;
             padding: 0;
             margin: 0;
+            position: relative;
+            z-index: 2;
         }
 
         /* Marquee title */
@@ -75,6 +111,12 @@
             text-transform: uppercase;
             color: gold;
             text-shadow: 0 0 10px gold;
+        }
+
+        /* Walk of Fame star */
+        #star {
+            width: 200px;
+            margin: 20px auto;
         }
 
         /* Container */
@@ -136,6 +178,7 @@
 <body>
 
     <div class="spotlight"></div>
+    <div id="glitterOverlay"></div>
 
     <!-- Sparkles -->
     <script>
@@ -149,8 +192,14 @@
         }
     </script>
 
+    <!-- Curtains -->
+    <div id="curtainLeft"></div>
+    <div id="curtainRight"></div>
+
     <div id="filmstrip">
         <div id="marquee">Samantha's Sweet Sixteen</div>
+
+        <img id="star" src="https://i.imgur.com/1tQ0p8G.png">
 
         <div id="container">
             <p>Take a photo using your camera:</p>
