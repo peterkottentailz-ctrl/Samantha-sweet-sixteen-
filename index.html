@@ -61,16 +61,25 @@ document.getElementById('cameraInput').addEventListener('change', async function
     document.getElementById('status').innerText = "Uploading photo...";
 
     // Convert file to form data
-    const formData = new FormData();
-formData.append("uploadedFile", file, "photo.jpg");
-
 try {
-    const uploadUrl = "https://script.google.com/macros/s/AKfycbwpW5BbEYYpxLjqpZ23PqGlFV9JrlOk4MXUsbzx7fvzNvrxWUVPKfLlmtT5skO1ZBnSSA/exec";
+    const uploadUrl = "https://script.google.com/macros/s/AKfycbwAaQ3pIglcOE5bsaI6f8J4fHKazj-WXwFw5nJd5vAzEXs4mK_URqBW5CB06m0IWUQT/exec";
 
     const response = await fetch(uploadUrl, {
         method: "POST",
-        body: formData
+        headers: {
+            "Content-Type": "application/octet-stream"
+        },
+        body: file
     });
+
+    if (response.ok) {
+        document.getElementById('status').innerText = "Photo uploaded successfully!";
+    } else {
+        document.getElementById('status').innerText = "Upload failed.";
+    }
+} catch (error) {
+    document.getElementById('status').innerText = "Error uploading photo.";
+}
 
         if (response.ok) {
             document.getElementById('status').innerText = "Photo uploaded successfully!";
