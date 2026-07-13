@@ -6,7 +6,7 @@
     <title>Samantha's Sweet Sixteen – Upload</title>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@700&family=Great+Vibes&display=swap');
 
         body {
             margin: 0;
@@ -16,7 +16,7 @@
             color: gold;
         }
 
-        /* Filmstrip border around the whole page */
+        /* Filmstrip border */
         #pageWrapper {
             min-height: 100vh;
             border: 12px solid black;
@@ -29,7 +29,6 @@
             overflow: hidden;
         }
 
-        /* Filmstrip holes */
         #pageWrapper::before,
         #pageWrapper::after {
             content: "";
@@ -42,13 +41,8 @@
             background-repeat: repeat-x;
         }
 
-        #pageWrapper::before {
-            top: -2px;
-        }
-
-        #pageWrapper::after {
-            bottom: -2px;
-        }
+        #pageWrapper::before { top: -2px; }
+        #pageWrapper::after { bottom: -2px; }
 
         /* Glitter overlay */
         #glitterOverlay {
@@ -75,19 +69,25 @@
             background-position: center;
             z-index: 3;
             pointer-events: none;
+            transition: transform 2.2s ease-in-out;
         }
 
         #curtainLeft {
             left: 0;
             background-image: url('curtain-left.png');
+            transform: translateX(0);
         }
 
         #curtainRight {
             right: 0;
             background-image: url('curtain-right.png');
+            transform: translateX(0);
         }
 
-        /* Content area */
+        .openLeft { transform: translateX(-100%); }
+        .openRight { transform: translateX(100%); }
+
+        /* Content */
         #content {
             position: relative;
             z-index: 4;
@@ -95,7 +95,7 @@
             padding-bottom: 40px;
         }
 
-        /* Hollywood marquee header */
+        /* Marquee header */
         #header {
             margin: 20px auto 10px;
             max-width: 420px;
@@ -120,21 +120,17 @@
             box-shadow: 0 0 12px gold;
         }
 
-        #header::before {
-            left: -30px;
-        }
+        #header::before { left: -30px; }
+        #header::after { right: -30px; }
 
-        #header::after {
-            right: -30px;
-        }
-
+        /* ⭐ Cursive header font */
         #header h1 {
             margin: 0;
-            font-family: "Playfair Display", serif;
-            font-size: 26px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px gold;
+            font-family: "Great Vibes", cursive;
+            font-size: 40px;
+            letter-spacing: 1px;
+            text-transform: none;
+            text-shadow: 0 0 12px gold;
         }
 
         #header p {
@@ -143,7 +139,7 @@
             color: #f5e1a0;
         }
 
-        /* Spotlight behind photo */
+        /* Spotlight */
         #spotlight {
             margin: 20px auto 0;
             width: 280px;
@@ -153,7 +149,7 @@
             filter: blur(4px);
         }
 
-        /* Gold photo frame */
+        /* Photo frame */
         #photoFrame {
             margin: -230px auto 20px;
             width: 260px;
@@ -171,7 +167,7 @@
             display: block;
         }
 
-        /* Upload container */
+        /* Upload box */
         #uploadBox {
             margin: 10px auto 0;
             max-width: 420px;
@@ -188,7 +184,6 @@
             margin: 8px 0;
         }
 
-        /* Movie ticket buttons */
         .ticketButton {
             display: inline-block;
             background: linear-gradient(to bottom, #d4af37, #b8860b);
@@ -205,9 +200,7 @@
             box-shadow: 0 0 12px gold;
         }
 
-        .ticketButton input {
-            display: none;
-        }
+        .ticketButton input { display: none; }
 
         #status {
             margin-top: 16px;
@@ -216,7 +209,6 @@
             color: gold;
         }
 
-        /* Footer */
         #footer {
             margin: 22px auto 0;
             max-width: 420px;
@@ -228,46 +220,23 @@
             border-top: 4px solid gold;
             box-shadow: 0 -8px 20px gold;
         }
-
-        @media (max-width: 600px) {
-            #curtainLeft,
-            #curtainRight {
-                width: 28%;
-            }
-
-            #header h1 {
-                font-size: 22px;
-            }
-
-            #photoFrame {
-                width: 230px;
-            }
-
-            #spotlight {
-                width: 250px;
-                height: 250px;
-            }
-        }
     </style>
 </head>
 
 <body>
-    <!-- Glitter overlay -->
     <div id="glitterOverlay"></div>
 
-    <!-- Full-height curtains -->
     <div id="curtainLeft"></div>
     <div id="curtainRight"></div>
 
     <div id="pageWrapper">
         <div id="content">
-            <!-- Hollywood marquee header -->
+
             <div id="header">
                 <h1>Samantha's Sweet Sixteen</h1>
                 <p>Red Carpet Photo Upload</p>
             </div>
 
-            <!-- Spotlight + photo -->
             <div id="spotlight"></div>
 
             <div id="photoFrame">
@@ -275,7 +244,6 @@
                      alt="Samantha" id="samanthaPhoto">
             </div>
 
-            <!-- Upload Box -->
             <div id="uploadBox">
                 <p>Take a photo using your camera:</p>
                 <label class="ticketButton">
@@ -295,10 +263,16 @@
             <div id="footer">
                 Step into the spotlight and share your best Sweet Sixteen moments ✨
             </div>
+
         </div>
     </div>
 
     <script>
+        window.onload = () => {
+            document.getElementById("curtainLeft").classList.add("openLeft");
+            document.getElementById("curtainRight").classList.add("openRight");
+        };
+
         const uploadUrl = "https://script.google.com/macros/s/AKfycbzjLkwPl7QZMEwJx0VK4k8H4jSIJ5Kopo9boIUWtFoUmDkhVHw3nkS-u4LB4Q7oNiHJ4A/exec";
 
         async function uploadSinglePhoto(file) {
