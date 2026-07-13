@@ -6,7 +6,7 @@
     <title>Samantha's Sweet Sixteen – Upload</title>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@700&family=Great+Vibes&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&display=swap');
 
         body {
             margin: 0;
@@ -58,15 +58,14 @@
             z-index: 2;
         }
 
-        /* Curtains */
-        #curtainLeft,
-        #curtainRight {
+        /* Curtains as REAL images */
+        .curtain {
             position: fixed;
             top: 0;
             bottom: 0;
             width: 30%;
-            background-size: cover;
-            background-position: center;
+            height: 100%;
+            object-fit: cover;
             z-index: 3;
             pointer-events: none;
             transition: transform 2.2s ease-in-out;
@@ -74,13 +73,11 @@
 
         #curtainLeft {
             left: 0;
-            background-image: url('curtain-left.png');
             transform: translateX(0);
         }
 
         #curtainRight {
             right: 0;
-            background-image: url('curtain-right.png');
             transform: translateX(0);
         }
 
@@ -95,7 +92,7 @@
             padding-bottom: 40px;
         }
 
-        /* Marquee header */
+        /* Header */
         #header {
             margin: 20px auto 10px;
             max-width: 420px;
@@ -123,7 +120,6 @@
         #header::before { left: -30px; }
         #header::after { right: -30px; }
 
-        /* ⭐ Cursive header font */
         #header h1 {
             margin: 0;
             font-family: "Great Vibes", cursive;
@@ -226,8 +222,9 @@
 <body>
     <div id="glitterOverlay"></div>
 
-    <div id="curtainLeft"></div>
-    <div id="curtainRight"></div>
+    <!-- REAL curtain images -->
+    <img id="curtainLeft" class="curtain" src="curtain-left.png" alt="">
+    <img id="curtainRight" class="curtain" src="curtain-right.png" alt="">
 
     <div id="pageWrapper">
         <div id="content">
@@ -268,20 +265,14 @@
     </div>
 
     <script>
-        /* ⭐ FIXED curtain animation — waits for images to load */
+        /* ⭐ Curtains animate ONLY after both images load */
         window.onload = () => {
             const left = document.getElementById("curtainLeft");
             const right = document.getElementById("curtainRight");
 
-            const imgLeft = new Image();
-            const imgRight = new Image();
-
-            imgLeft.src = left.style.backgroundImage.replace(/url\("|"\)/g, "");
-            imgRight.src = right.style.backgroundImage.replace(/url\("|"\)/g, "");
-
             Promise.all([
-                new Promise(res => imgLeft.onload = res),
-                new Promise(res => imgRight.onload = res)
+                new Promise(res => left.onload = res),
+                new Promise(res => right.onload = res)
             ]).then(() => {
                 setTimeout(() => {
                     left.classList.add("openLeft");
@@ -300,4 +291,43 @@
                     const base64 = reader.result.split(",")[1];
 
                     const formData = new FormData();
-                    formData.append
+                    formData.append("file", base64);
+
+                    const response = await fetch(uploadUrl, {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    resolve(response.ok);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.getElementById('cameraInput').addEventListener('change', async () => {
+            const file = cameraInput.files[0];
+            if (!file) return;
+            document.getElementById('status').innerText = "Uploading...";
+            const success = await uploadSinglePhoto(file);
+            document.getElementById('status').innerText = success ? "Photo uploaded successfully!" : "Upload failed.";
+        });
+
+        document.getElementById('galleryInput').addEventListener('change', async () => {
+            const files = galleryInput.files;
+            if (!files.length) return;
+            document.getElementById('status').innerText = "Uploading multiple photos...";
+
+            let uploaded = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const success = await uploadSinglePhoto(files[i]);
+                if (success) uploaded++;
+            }
+
+            document.getElementById('status').innerText =
+                `Uploaded ${uploaded} of ${files.length} photos successfully!`;
+        });
+    </script>
+</body>
+</html>
