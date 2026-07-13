@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Samantha's Sweet Sixteen – Old Hollywood Upload</title>
+    <title>Samantha's Sweet Sixteen – Upload</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@700&display=swap');
@@ -17,15 +17,15 @@
             text-align: center;
         }
 
-        /* Simple red curtain background at top */
-        #curtain {
+        /* Red header */
+        #header {
             background: linear-gradient(to bottom, #660000, #990000, #cc0000);
             padding: 25px 15px;
             border-bottom: 4px solid gold;
             box-shadow: 0 0 25px gold;
         }
 
-        #curtain h1 {
+        #header h1 {
             margin: 0;
             font-family: "Playfair Display", serif;
             font-size: 28px;
@@ -34,57 +34,37 @@
             text-shadow: 0 0 10px gold;
         }
 
-        #curtain p {
+        #header p {
             margin-top: 8px;
             font-size: 16px;
             color: #f5e1a0;
         }
 
-        /* Simple filmstrip-style frame using borders and dots */
-        #frame {
+        /* Gold photo frame */
+        #photoFrame {
+            margin: 25px auto;
+            width: 260px;
+            padding: 10px;
+            border: 4px solid gold;
+            border-radius: 12px;
+            box-shadow: 0 0 20px gold;
+            background: #000;
+        }
+
+        #samanthaPhoto {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+
+        /* Upload container */
+        #uploadBox {
             margin: 25px auto;
             max-width: 420px;
             padding: 18px;
             border: 4px solid gold;
             box-shadow: 0 0 20px gold;
             background: #111;
-            position: relative;
-        }
-
-        #frame::before,
-        #frame::after {
-            content: "";
-            position: absolute;
-            left: 10px;
-            right: 10px;
-            height: 6px;
-            background-image: radial-gradient(circle, #000 2px, transparent 2px);
-            background-size: 16px 6px;
-        }
-
-        #frame::before {
-            top: -12px;
-        }
-
-        #frame::after {
-            bottom: -12px;
-        }
-
-        /* Simple “star” badge */
-        #starBadge {
-            margin: 0 auto 15px auto;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 3px solid gold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-            box-shadow: 0 0 15px gold;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
         }
 
         p {
@@ -92,6 +72,7 @@
             color: #f5e1a0;
         }
 
+        /* Movie ticket buttons */
         .ticketButton {
             display: inline-block;
             background: linear-gradient(to bottom, #d4af37, #b8860b);
@@ -115,6 +96,7 @@
             color: gold;
         }
 
+        /* Footer */
         #footer {
             background: linear-gradient(to bottom, #660000, #990000, #cc0000);
             padding: 18px;
@@ -129,16 +111,19 @@
 
 <body>
 
-    <div id="curtain">
+    <div id="header">
         <h1>Samantha's Sweet Sixteen</h1>
-        <p>Old Hollywood Photo Upload</p>
+        <p>Photo Upload</p>
     </div>
 
-    <div id="frame">
-        <div id="starBadge">
-            OLD HOLLYWOOD STAR
-        </div>
+    <!-- Samantha's Photo -->
+    <div id="photoFrame">
+        <img src="https://github.com/peterkottentailz-ctrl/Samantha-sweet-sixteen-/raw/refs/heads/main/sams%20pic" 
+             alt="Samantha" id="samanthaPhoto">
+    </div>
 
+    <!-- Upload Box -->
+    <div id="uploadBox">
         <p>Take a photo using your camera:</p>
         <label class="ticketButton">
             Tap to Take Photo
@@ -202,9 +187,4 @@
             }
 
             document.getElementById('status').innerText =
-                `Uploaded ${uploaded} of ${files.length} photos successfully!`;
-        });
-    </script>
-
-</body>
-</html>
+                `Uploaded ${uploaded
