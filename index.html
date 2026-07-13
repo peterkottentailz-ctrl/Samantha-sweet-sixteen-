@@ -14,79 +14,6 @@
             background: black;
             font-family: "Cinzel", serif;
             color: gold;
-            overflow: hidden;
-        }
-
-        /* Curtains */
-        .curtain {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            width: 50%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 5;
-            pointer-events: none;
-            transition: transform 2s ease-in-out;
-        }
-
-        #curtainLeft { left: 0; transform: translateX(0); }
-        #curtainRight { right: 0; transform: translateX(0); }
-
-        .openLeft { transform: translateX(-100%); }
-        .openRight { transform: translateX(100%); }
-
-        /* ENTER SCREEN */
-        #enterScreen {
-            position: fixed;
-            inset: 0;
-            background: black;
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* ⭐ FIXED: Movie Theater Marquee Button */
-        #enterButton {
-            background: linear-gradient(to bottom, #990000, #660000);
-            padding: 20px 40px;
-            border-radius: 20px;
-            border: 6px solid gold;
-            box-shadow: 0 0 25px gold, 0 0 10px red inset;
-            color: gold;
-            font-size: 28px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            cursor: pointer;
-            text-align: center;
-            position: relative;
-            z-index: 20; /* ⭐ FIX: Button now appears above curtains */
-        }
-
-        #enterButton::before,
-        #enterButton::after {
-            content: "";
-            position: absolute;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #fff 20%, #ffd700 60%, #b8860b 80%);
-            box-shadow: 0 0 12px gold;
-        }
-
-        #enterButton::before { left: -30px; top: 50%; transform: translateY(-50%); }
-        #enterButton::after { right: -30px; top: 50%; transform: translateY(-50%); }
-
-        /* Content fade-in */
-        #pageWrapper {
-            opacity: 0;
-            transition: opacity 1.2s ease-in-out;
-        }
-
-        #pageWrapper.showContent {
-            opacity: 1;
         }
 
         /* Filmstrip border */
@@ -134,7 +61,7 @@
         /* Content */
         #content {
             position: relative;
-            z-index: 4;
+            z-index: 3;
             text-align: center;
             padding-bottom: 40px;
         }
@@ -251,16 +178,6 @@
 </head>
 
 <body>
-
-    <!-- Curtains -->
-    <img id="curtainLeft" class="curtain" src="curtain-left.png">
-    <img id="curtainRight" class="curtain" src="curtain-right.png">
-
-    <!-- ENTER SCREEN -->
-    <div id="enterScreen">
-        <div id="enterButton">ENTER</div>
-    </div>
-
     <div id="glitterOverlay"></div>
 
     <div id="pageWrapper">
@@ -302,22 +219,53 @@
     </div>
 
     <script>
-        /* ENTER button logic */
-        document.getElementById("enterButton").onclick = () => {
-            const left = document.getElementById("curtainLeft");
-            const right = document.getElementById("curtainRight");
+        const uploadUrl = "https://script.google.com/macros/s/AKfycbzjLkwPl7QZMEwJx0VK4k8H4jSIJ5Kopo9boIUWtFoUmDkhVHw3nkS-u4LB4Q7oNiHJ4A/exec";
 
-            left.classList.add("openLeft");
-            right.classList.add("openRight");
+        async function uploadSinglePhoto(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
 
-            document.getElementById("pageWrapper").classList.add("showContent");
+                reader.onload = async function() {
+                    const base64 = reader.result.split(",")[1];
 
-            setTimeout(() => {
-                document.getElementById("enterScreen").style.display = "none";
-                document.body.style.overflow = "auto";
-            }, 1500);
-        };
+                    const formData = new FormData();
+                    formData.append("file", base64);
+
+                    const response = await fetch(uploadUrl, {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    resolve(response.ok);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        document.getElementById('cameraInput').addEventListener('change', async () => {
+            const file = cameraInput.files[0];
+            if (!file) return;
+            document.getElementById('status').innerText = "Uploading...";
+            const success = await uploadSinglePhoto(file);
+            document.getElementById('status').innerText = success ? "Photo uploaded successfully!" : "Upload failed.";
+        });
+
+        document.getElementById('galleryInput').addEventListener('change', async () => {
+            const files = galleryInput.files;
+            if (!files.length) return;
+            document.getElementById('status').innerText = "Uploading multiple photos...";
+
+            let uploaded = 0;
+
+            for (let i = 0; i < files.length; i++) {
+                const success = await uploadSinglePhoto(files[i]);
+                if (success) uploaded++;
+            }
+
+            document.getElementById('status').innerText =
+                `Uploaded ${uploaded} of ${files.length} photos successfully!`;
+        });
     </script>
-
 </body>
 </html>
