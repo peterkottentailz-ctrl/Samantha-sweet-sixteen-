@@ -16,6 +16,43 @@
             color: gold;
         }
 
+        /* Curtains start at 50% width so animation is visible */
+        .curtain {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 3;
+            pointer-events: none;
+            transition: transform 2.2s ease-in-out, width 1s ease-in-out;
+        }
+
+        #curtainLeft {
+            left: 0;
+            transform: translateX(0);
+        }
+
+        #curtainRight {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        /* Slide open */
+        .openLeft {
+            transform: translateX(-100%);
+        }
+
+        .openRight {
+            transform: translateX(100%);
+        }
+
+        /* After animation, shrink to 30% width */
+        .finalSize {
+            width: 30%;
+        }
+
         /* Filmstrip border */
         #pageWrapper {
             min-height: 100vh;
@@ -58,32 +95,6 @@
             z-index: 2;
         }
 
-        /* Curtains as REAL images */
-        .curtain {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            width: 30%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 3;
-            pointer-events: none;
-            transition: transform 2.2s ease-in-out;
-        }
-
-        #curtainLeft {
-            left: 0;
-            transform: translateX(0);
-        }
-
-        #curtainRight {
-            right: 0;
-            transform: translateX(0);
-        }
-
-        .openLeft { transform: translateX(-100%); }
-        .openRight { transform: translateX(100%); }
-
         /* Content */
         #content {
             position: relative;
@@ -103,22 +114,6 @@
             box-shadow: 0 0 25px gold;
             position: relative;
         }
-
-        #header::before,
-        #header::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 3px solid gold;
-            background: radial-gradient(circle, #fff 10%, #ffd700 40%, #b8860b 70%);
-            box-shadow: 0 0 12px gold;
-        }
-
-        #header::before { left: -30px; }
-        #header::after { right: -30px; }
 
         #header h1 {
             margin: 0;
@@ -222,9 +217,9 @@
 <body>
     <div id="glitterOverlay"></div>
 
-    <!-- REAL curtain images -->
-    <img id="curtainLeft" class="curtain" src="curtain-left.png" alt="">
-    <img id="curtainRight" class="curtain" src="curtain-right.png" alt="">
+    <!-- Curtains as real images -->
+    <img id="curtainLeft" class="curtain" src="curtain-left.png">
+    <img id="curtainRight" class="curtain" src="curtain-right.png">
 
     <div id="pageWrapper">
         <div id="content">
@@ -265,7 +260,7 @@
     </div>
 
     <script>
-        /* ⭐ Curtains animate ONLY after both images load */
+        /* Curtains animate after loading */
         window.onload = () => {
             const left = document.getElementById("curtainLeft");
             const right = document.getElementById("curtainRight");
@@ -278,56 +273,14 @@
                     left.classList.add("openLeft");
                     right.classList.add("openRight");
                 }, 300);
+
+                /* After animation, shrink to final size */
+                setTimeout(() => {
+                    left.classList.add("finalSize");
+                    right.classList.add("finalSize");
+                }, 2500);
             });
         };
-
-        const uploadUrl = "https://script.google.com/macros/s/AKfycbzjLkwPl7QZMEwJx0VK4k8H4jSIJ5Kopo9boIUWtFoUmDkhVHw3nkS-u4LB4Q7oNiHJ4A/exec";
-
-        async function uploadSinglePhoto(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-
-                reader.onload = async function() {
-                    const base64 = reader.result.split(",")[1];
-
-                    const formData = new FormData();
-                    formData.append("file", base64);
-
-                    const response = await fetch(uploadUrl, {
-                        method: "POST",
-                        body: formData
-                    });
-
-                    resolve(response.ok);
-                };
-
-                reader.readAsDataURL(file);
-            });
-        }
-
-        document.getElementById('cameraInput').addEventListener('change', async () => {
-            const file = cameraInput.files[0];
-            if (!file) return;
-            document.getElementById('status').innerText = "Uploading...";
-            const success = await uploadSinglePhoto(file);
-            document.getElementById('status').innerText = success ? "Photo uploaded successfully!" : "Upload failed.";
-        });
-
-        document.getElementById('galleryInput').addEventListener('change', async () => {
-            const files = galleryInput.files;
-            if (!files.length) return;
-            document.getElementById('status').innerText = "Uploading multiple photos...";
-
-            let uploaded = 0;
-
-            for (let i = 0; i < files.length; i++) {
-                const success = await uploadSinglePhoto(files[i]);
-                if (success) uploaded++;
-            }
-
-            document.getElementById('status').innerText =
-                `Uploaded ${uploaded} of ${files.length} photos successfully!`;
-        });
     </script>
 </body>
 </html>
