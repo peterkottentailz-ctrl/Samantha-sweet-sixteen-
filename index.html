@@ -240,7 +240,7 @@
             <div id="spotlight"></div>
 
             <div id="photoFrame">
-                <img src="https://github.com/peterkottentailz-ctrl/Samantha-sweet-sixteen-/raw/refs/heads/main/sams%20pic"
+                <img src="https://github.com/peterkottentailz-ctrl/Samantha-sweet-sixteen/raw/refs/heads/main/sams%20pic"
                      alt="Samantha" id="samanthaPhoto">
             </div>
 
@@ -268,9 +268,26 @@
     </div>
 
     <script>
+        /* ⭐ FIXED curtain animation — waits for images to load */
         window.onload = () => {
-            document.getElementById("curtainLeft").classList.add("openLeft");
-            document.getElementById("curtainRight").classList.add("openRight");
+            const left = document.getElementById("curtainLeft");
+            const right = document.getElementById("curtainRight");
+
+            const imgLeft = new Image();
+            const imgRight = new Image();
+
+            imgLeft.src = left.style.backgroundImage.replace(/url\("|"\)/g, "");
+            imgRight.src = right.style.backgroundImage.replace(/url\("|"\)/g, "");
+
+            Promise.all([
+                new Promise(res => imgLeft.onload = res),
+                new Promise(res => imgRight.onload = res)
+            ]).then(() => {
+                setTimeout(() => {
+                    left.classList.add("openLeft");
+                    right.classList.add("openRight");
+                }, 300);
+            });
         };
 
         const uploadUrl = "https://script.google.com/macros/s/AKfycbzjLkwPl7QZMEwJx0VK4k8H4jSIJ5Kopo9boIUWtFoUmDkhVHw3nkS-u4LB4Q7oNiHJ4A/exec";
@@ -283,43 +300,4 @@
                     const base64 = reader.result.split(",")[1];
 
                     const formData = new FormData();
-                    formData.append("file", base64);
-
-                    const response = await fetch(uploadUrl, {
-                        method: "POST",
-                        body: formData
-                    });
-
-                    resolve(response.ok);
-                };
-
-                reader.readAsDataURL(file);
-            });
-        }
-
-        document.getElementById('cameraInput').addEventListener('change', async () => {
-            const file = cameraInput.files[0];
-            if (!file) return;
-            document.getElementById('status').innerText = "Uploading...";
-            const success = await uploadSinglePhoto(file);
-            document.getElementById('status').innerText = success ? "Photo uploaded successfully!" : "Upload failed.";
-        });
-
-        document.getElementById('galleryInput').addEventListener('change', async () => {
-            const files = galleryInput.files;
-            if (!files.length) return;
-            document.getElementById('status').innerText = "Uploading multiple photos...";
-
-            let uploaded = 0;
-
-            for (let i = 0; i < files.length; i++) {
-                const success = await uploadSinglePhoto(files[i]);
-                if (success) uploaded++;
-            }
-
-            document.getElementById('status').innerText =
-                `Uploaded ${uploaded} of ${files.length} photos successfully!`;
-        });
-    </script>
-</body>
-</html>
+                    formData.append
